@@ -40,8 +40,6 @@ public class MovimentacaoService {
         return MovimentacaoResponse.of(movimentacoes);
     }
 
-    //TODO: Fazer teste unitário
-
     public List<MovimentacaoResponse> listarPorTipoMovimentacao(String tipo) {
         try {
             var eTipo = ETipo.valueOf(tipo.toUpperCase());
