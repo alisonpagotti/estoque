@@ -48,7 +48,7 @@ public class Produto implements Serializable {
         this.estoque = estoque;
     }
 
-    public void validar(Integer quantidade) {
+    public void validarEstoque(Integer quantidade) {
         if (this.quantidade == 0) {
             this.estoque = null;
         } else {
@@ -61,6 +61,9 @@ public class Produto implements Serializable {
     }
 
     public void saida(Integer quantidade) {
+        if (this.quantidade < quantidade) {
+            throw new ArithmeticException("Quantidade de saída maior do que a quantidade que o estoque possui!");
+        }
         this.quantidade -= quantidade;
     }
 }

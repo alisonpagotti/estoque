@@ -123,7 +123,7 @@ public class MovimentacaoService {
     private MovimentacaoResponse salvarSaida(Produto produto, Estoque estoque, MovimentacaoRequest request) {
         estoque.saida(request.getQuantidade());
         produto.saida(request.getQuantidade());
-        produto.validar(request.getQuantidade());
+        produto.validarEstoque(request.getQuantidade());
         estoque.saidaValor(produto.getValorDoProduto(), request.getQuantidade());
 
         var movimentacao = Movimentacao.builder()

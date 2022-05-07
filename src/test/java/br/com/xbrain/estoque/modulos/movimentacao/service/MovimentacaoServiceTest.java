@@ -299,6 +299,8 @@ public class MovimentacaoServiceTest {
                 .hasMessage("Quantidade de saída maior do que a quantidade que o estoque possui!");
     }
 
+    //TODO: Fazer teste de saida maior do que o estoque do produto
+
     @Test
     public void atualizar_movimentacao_sucesso() throws Exception {
 
