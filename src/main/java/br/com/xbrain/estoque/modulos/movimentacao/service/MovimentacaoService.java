@@ -34,6 +34,9 @@ public class MovimentacaoService {
     @Autowired
     private EstoqueRepository estoqueRepository;
 
+    private final String EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA = "Tipo de movimentação não cadastrada!";
+    private final String EX_MOVIMENTACAO_NAO_CADASTRADA = "Movimentação não cadastrada!";
+
     public List<MovimentacaoResponse> listarTodas() {
         var movimentacoes = repository.findAll();
 
@@ -43,37 +46,13 @@ public class MovimentacaoService {
     public List<MovimentacaoResponse> listarPorTipoMovimentacao(String tipo) {
         try {
             var eTipo = ETipo.valueOf(tipo.toUpperCase());
-            var tipoMovimentacao = repository.findByTipo(eTipo);
+            var listaPorTipo = repository.findByTipo(eTipo);
 
-            if (eTipo == ENTRADA) {
-                return listarPorTipoEntrada(tipoMovimentacao);
+            return MovimentacaoResponse.of(listaPorTipo);
 
-            } else {
-                return listarPorTipoSaida(tipoMovimentacao);
-            }
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Tipo de movimentação não cadastrada!");
+            throw new IllegalArgumentException(EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA);
         }
-    }
-
-    private List<MovimentacaoResponse> listarPorTipoEntrada(List<Movimentacao> tipoMovimentacao) {
-
-        var tipoEntrada = tipoMovimentacao
-                .stream()
-                .filter((entrada) -> entrada.getTipo().equals(ENTRADA))
-                .collect(Collectors.toList());
-
-        return MovimentacaoResponse.of(tipoEntrada);
-    }
-
-    private List<MovimentacaoResponse> listarPorTipoSaida(List<Movimentacao> tipoMovimentacao) {
-
-        var tipoSaida = tipoMovimentacao
-                .stream()
-                .filter((saida) -> saida.getTipo().equals(SAIDA))
-                .collect(Collectors.toList());
-
-        return MovimentacaoResponse.of(tipoSaida);
     }
 
     public MovimentacaoResponse detalhar(Integer id) {
@@ -83,7 +62,7 @@ public class MovimentacaoService {
             return MovimentacaoResponse.of(movimentacao);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Tipo de movimentação não cadastrada!");
+            throw new EntityNotFoundException(EX_MOVIMENTACAO_NAO_CADASTRADA);
         }
     }
 
@@ -149,7 +128,7 @@ public class MovimentacaoService {
             return MovimentacaoResponse.of(movimentacao);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Movimentação não cadastrada!");
+            throw new EntityNotFoundException(EX_MOVIMENTACAO_NAO_CADASTRADA);
         }
     }
 }

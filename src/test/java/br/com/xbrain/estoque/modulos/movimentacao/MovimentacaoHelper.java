@@ -4,6 +4,7 @@ import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
 import br.com.xbrain.estoque.modulos.produto.model.Produto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class MovimentacaoHelper {
@@ -14,6 +15,7 @@ public class MovimentacaoHelper {
                 .nomeDoProduto(nome)
                 .quantidade(0)
                 .valorDoProduto(new BigDecimal(3.0))
+                .dataCadastro(LocalDateTime.now())
                 .build();
     }
 
@@ -24,6 +26,7 @@ public class MovimentacaoHelper {
                 .quantidadeTotal(0)
                 .produto(new ArrayList<>())
                 .valorTotal(new BigDecimal(0))
+                .dataCadastro(LocalDateTime.now())
                 .build();
     }
 

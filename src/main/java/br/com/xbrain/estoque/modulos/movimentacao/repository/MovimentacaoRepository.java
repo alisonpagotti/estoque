@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Integer> {
 
-    @Query("SELECT a FROM Movimentacao a WHERE tipo = ?1")
     List<Movimentacao> findByTipo(ETipo tipo);
 }

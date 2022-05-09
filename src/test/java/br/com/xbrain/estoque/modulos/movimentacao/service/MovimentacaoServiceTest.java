@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -166,6 +167,7 @@ public class MovimentacaoServiceTest {
                 .quantidadeTotal(10)
                 .valorTotal(new BigDecimal(30.0))
                 .produto(new ArrayList<>())
+                .dataCadastro(LocalDateTime.now())
                 .build();
 
         var produtoAtual = Produto.builder()
@@ -174,6 +176,7 @@ public class MovimentacaoServiceTest {
                 .valorDoProduto(new BigDecimal(3.0))
                 .quantidade(movimentacaoRequest.getQuantidade())
                 .estoque(estoqueAtual)
+                .dataCadastro(LocalDateTime.now())
                 .build();
 
         var movimentacao = Movimentacao.builder()
@@ -182,6 +185,7 @@ public class MovimentacaoServiceTest {
                 .produto(produtoAtual)
                 .estoque(estoqueAtual)
                 .observacao("Entrada de 10 canetas azuis")
+                .dataCadastro(LocalDateTime.now())
                 .build();
 
         var movimentacaoEntrada = service.movimentacao(movimentacaoRequest);
