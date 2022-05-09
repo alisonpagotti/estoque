@@ -37,10 +37,6 @@ public class Estoque {
     @OneToMany(mappedBy = "estoque")
     private List<Movimentacao> movimentacao;
 
-    public void atualizar(String nome) {
-        this.nomeDoEstoque = nome;
-    }
-
     public void entrada(Integer quantidade) {
         var quantidadePermitida = 100 - this.quantidadeTotal;
 

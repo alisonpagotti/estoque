@@ -66,7 +66,7 @@ public class EstoqueService {
     public EstoqueResponse atualizar(Integer id, AtualizarEstoqueRequest request) {
         try {
             var estoque = repository.getById(id);
-            estoque.atualizar(request.getNome());
+            estoque.setNomeDoEstoque(request.getNome());
 
             return EstoqueResponse.of(estoque);
 

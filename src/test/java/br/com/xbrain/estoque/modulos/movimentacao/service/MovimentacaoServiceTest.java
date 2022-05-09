@@ -150,13 +150,15 @@ public class MovimentacaoServiceTest {
     @Test
     public void movimentacao_entrada_sucesso() throws Exception {
 
-        when(produtoRepository.getById(any())).thenReturn(umProduto(1, "Caneta Azul"));
-        when(estoqueRepository.getById(any())).thenReturn(umEstoque(1, "Estoque de Canetas"));
+        var dataAtual = LocalDateTime.now();
+
+        when(produtoRepository.getById(any())).thenReturn(umProdutoDataCadastro(1, "Caneta Azul", dataAtual));
+        when(estoqueRepository.getById(any())).thenReturn(umEstoqueDataCadastro(1, "Estoque de Canetas", dataAtual));
 
         var movimentacaoRequest = MovimentacaoRequest.builder()
                 .tipo(ETipo.ENTRADA)
-                .idProduto(umProduto(1, "Caneta Azul").getId())
-                .idEstoque(umEstoque(1, "Estoque de Canetas").getId())
+                .idProduto(umProdutoDataCadastro(1, "Caneta Azul", dataAtual).getId())
+                .idEstoque(umEstoqueDataCadastro(1, "Estoque de Canetas", dataAtual).getId())
                 .quantidade(10)
                 .observacao("Entrada de 10 canetas azuis")
                 .build();
@@ -167,7 +169,7 @@ public class MovimentacaoServiceTest {
                 .quantidadeTotal(10)
                 .valorTotal(new BigDecimal(30.0))
                 .produto(new ArrayList<>())
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataAtual)
                 .build();
 
         var produtoAtual = Produto.builder()
@@ -176,7 +178,7 @@ public class MovimentacaoServiceTest {
                 .valorDoProduto(new BigDecimal(3.0))
                 .quantidade(movimentacaoRequest.getQuantidade())
                 .estoque(estoqueAtual)
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataAtual)
                 .build();
 
         var movimentacao = Movimentacao.builder()
@@ -185,7 +187,7 @@ public class MovimentacaoServiceTest {
                 .produto(produtoAtual)
                 .estoque(estoqueAtual)
                 .observacao("Entrada de 10 canetas azuis")
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataAtual)
                 .build();
 
         var movimentacaoEntrada = service.movimentacao(movimentacaoRequest);

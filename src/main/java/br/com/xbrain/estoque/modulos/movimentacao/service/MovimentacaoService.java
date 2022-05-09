@@ -123,7 +123,7 @@ public class MovimentacaoService {
     public MovimentacaoResponse atualizar(Integer id, AtualizarMovimentacaoRequest request) {
         try {
             var movimentacao = repository.getById(id);
-            movimentacao.atualizar(request.getObservacao());
+            movimentacao.setObservacao(request.getObservacao());
 
             return MovimentacaoResponse.of(movimentacao);
 

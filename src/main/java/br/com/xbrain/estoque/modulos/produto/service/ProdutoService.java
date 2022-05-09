@@ -72,7 +72,8 @@ public class ProdutoService {
     public ProdutoResponse atualizar(Integer id, AtualizarProdutoRequest request) {
         try {
             var produto = repository.getById(id);
-            produto.atualizar(request.getNome(), request.getValorDoProduto());
+            produto.setNomeDoProduto(request.getNome());
+            produto.setValorDoProduto(request.getValorDoProduto());
 
             return ProdutoResponse.of(produto);
 

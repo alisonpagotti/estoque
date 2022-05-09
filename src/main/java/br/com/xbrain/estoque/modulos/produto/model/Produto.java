@@ -39,11 +39,6 @@ public class Produto implements Serializable {
     @JoinColumn(name = "estoque_id")
     private Estoque estoque;
 
-    public void atualizar(String nomeDoProduto, BigDecimal valorDoProduto) {
-        this.nomeDoProduto = nomeDoProduto;
-        this.valorDoProduto = valorDoProduto;
-    }
-
     public void of(Estoque estoque) {
         this.estoque = estoque;
     }

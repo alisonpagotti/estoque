@@ -42,8 +42,4 @@ public class Movimentacao {
     @ManyToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "estoque")
     private Estoque estoque;
-
-    public void atualizar(String observacao) {
-        this.observacao = observacao;
-    }
 }
