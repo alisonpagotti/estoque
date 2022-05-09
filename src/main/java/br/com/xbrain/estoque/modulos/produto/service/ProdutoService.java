@@ -28,6 +28,9 @@ public class ProdutoService {
     @Autowired
     private EstoqueRepository estoqueRepository;
 
+    private final String EX_PRODUTO_NAO_CADASTRADO = "Produto não cadastrado!";
+    private final String EX_PRODUTO_JA_CADASTRADO = "Produto já cadastrado!";
+
     public List<ProdutoResponse> listarTodos() {
         var produto = repository.findAll();
 
@@ -41,7 +44,7 @@ public class ProdutoService {
             return ProdutoResponse.of(produto);
 
         } catch (Exception e) {
-            throw new EntityNotFoundException("Produto não cadastrado!");
+            throw new EntityNotFoundException(EX_PRODUTO_NAO_CADASTRADO);
         }
     }
 
@@ -61,7 +64,7 @@ public class ProdutoService {
             return ProdutoResponse.of(produto);
 
         } catch (Exception ex) {
-            throw new DataIntegrityViolationException("Produto já cadastrado!");
+            throw new DataIntegrityViolationException(EX_PRODUTO_JA_CADASTRADO);
         }
     }
 
@@ -74,7 +77,7 @@ public class ProdutoService {
             return ProdutoResponse.of(produto);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Produto não cadastrado!");
+            throw new EntityNotFoundException(EX_PRODUTO_NAO_CADASTRADO);
         }
     }
 
@@ -84,7 +87,7 @@ public class ProdutoService {
             repository.deleteById(id);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Produto não cadastrado!");
+            throw new EntityNotFoundException(EX_PRODUTO_NAO_CADASTRADO);
         }
     }
 }
