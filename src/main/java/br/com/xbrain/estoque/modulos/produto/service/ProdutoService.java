@@ -1,6 +1,7 @@
 package br.com.xbrain.estoque.modulos.produto.service;
 
 import br.com.xbrain.estoque.modulos.backup.produto.service.BackupProdutoService;
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.estoque.repository.EstoqueRepository;
 import br.com.xbrain.estoque.modulos.produto.dto.AtualizarProdutoRequest;
 import br.com.xbrain.estoque.modulos.produto.dto.ProdutoRequest;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,6 +27,9 @@ public class ProdutoService {
 
     @Autowired
     private EstoqueRepository estoqueRepository;
+
+    @Autowired
+    private DataHoraService dataHoraService;
 
     private final String EX_PRODUTO_NAO_CADASTRADO = "Produto não cadastrado!";
     private final String EX_PRODUTO_JA_CADASTRADO = "Produto já cadastrado!";
@@ -55,7 +58,7 @@ public class ProdutoService {
                     .nomeDoProduto(request.getNomeDoProduto())
                     .valorDoProduto(request.getValorDoProduto())
                     .quantidade(0)
-                    .dataCadastro(LocalDateTime.now())
+                    .dataCadastro(dataHoraService.DataHoraAtual())
                     .build();
 
             repository.save(produto);
@@ -72,7 +75,7 @@ public class ProdutoService {
     public ProdutoResponse atualizar(Integer id, AtualizarProdutoRequest request) {
         try {
             var produto = repository.getById(id);
-            produto.setNomeDoProduto(request.getNome());
+            produto.setNomeDoProduto(request.getNomeDoProduto());
             produto.setValorDoProduto(request.getValorDoProduto());
 
             return ProdutoResponse.of(produto);

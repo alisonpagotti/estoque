@@ -1,5 +1,7 @@
 package br.com.xbrain.estoque.modulos.produto.service;
 
+import br.com.xbrain.estoque.modulos.backup.produto.service.BackupProdutoService;
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.produto.dto.AtualizarProdutoRequest;
 import br.com.xbrain.estoque.modulos.produto.dto.ProdutoRequest;
 import br.com.xbrain.estoque.modulos.produto.model.Produto;
@@ -12,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +26,12 @@ public class ProdutoServiceTest {
 
     @Mock
     private ProdutoRepository repository;
+
+    @Mock
+    private DataHoraService dataHoraService;
+
+    @Mock
+    private BackupProdutoService backupProdutoService;
 
     @InjectMocks
     private ProdutoService service;
@@ -60,10 +69,15 @@ public class ProdutoServiceTest {
     @Test
     public void cadastrar_produto_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
+
         var produto = Produto.builder()
                 .nomeDoProduto("Caneta Preta")
                 .valorDoProduto(new BigDecimal(3.0))
                 .quantidade(0)
+                .dataCadastro(dataAtual)
                 .build();
 
         var produtoRequest = ProdutoRequest.builder()
@@ -89,7 +103,7 @@ public class ProdutoServiceTest {
                 .build();
 
         var produtoAtualizadoRequest = AtualizarProdutoRequest.builder()
-                .nome("Caneta Preta Atualizada")
+                .nomeDoProduto("Caneta Preta Atualizada")
                 .valorDoProduto(new BigDecimal(3.5))
                 .build();
 

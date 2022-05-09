@@ -1,5 +1,6 @@
 package br.com.xbrain.estoque.modulos.produto.controller;
 
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.produto.dto.ProdutoResponse;
 import br.com.xbrain.estoque.modulos.produto.model.Produto;
 import br.com.xbrain.estoque.modulos.produto.service.ProdutoService;
@@ -15,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +36,9 @@ public class ProdutoControllerTest {
 
     @MockBean
     private ProdutoService service;
+
+    @MockBean
+    private DataHoraService dataHoraService;
 
     @Test
     public void listar_todosProdutos_sucesso() throws Exception {
@@ -60,9 +65,9 @@ public class ProdutoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id").value(1))
-                .andExpect(jsonPath("$.[0].nome").value("Caneta Preta"))
+                .andExpect(jsonPath("$.[0].nomeDoProduto").value("Caneta Preta"))
                 .andExpect(jsonPath("$.[1].id").value(2))
-                .andExpect(jsonPath("$.[1].nome").value("Caderno com 100 folhas"));
+                .andExpect(jsonPath("$.[1].nomeDoProduto").value("Caderno com 100 folhas"));
     }
 
     @Test
@@ -78,18 +83,22 @@ public class ProdutoControllerTest {
     @Test
     public void detalhar_porProduto_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
         var produto = Produto.builder()
                 .id(1)
                 .nomeDoProduto("Caneta Preta")
                 .valorDoProduto(new BigDecimal(3.0))
+                .dataCadastro(dataAtual)
                 .build();
 
         when(service.detalhar(any())).thenReturn(ProdutoResponse.of(produto));
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         mockMvc.perform(get("/produtos/detalhar/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Caneta Preta"));
+                .andExpect(jsonPath("$.nomeDoProduto").value("Caneta Preta"));
     }
 
     @Test
@@ -106,6 +115,8 @@ public class ProdutoControllerTest {
     @Test
     public void cadastrar_produto_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
         var produto = Produto.builder()
                 .id(1)
                 .nomeDoProduto("Caneta Preta")
@@ -113,13 +124,14 @@ public class ProdutoControllerTest {
                 .build();
 
         when(service.cadastrar(any())).thenReturn(ProdutoResponse.of(produto));
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         mockMvc.perform(post("/produtos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\": 1, \"nome\": \"Caneta Preta\", \"valorDoProduto\": 3.0}"))
+                        .content("{\"id\": 1, \"nomeDoProduto\": \"Caneta Preta\", \"valorDoProduto\": 3.0}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Caneta Preta"));
+                .andExpect(jsonPath("$.nomeDoProduto").value("Caneta Preta"));
     }
 
     @Test
@@ -140,7 +152,7 @@ public class ProdutoControllerTest {
 
         mockMvc.perform(post("/produtos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\": 1, \"nome\": \"Caneta Preta\", \"valorDoProduto\": 3.5}"))
+                        .content("{\"id\": 1, \"nomeDoProduto\": \"Caneta Preta\", \"valorDoProduto\": 3.5}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem").value("Não foi possível realizar essa operação!"))
                 .andExpect(jsonPath("$.detalhes").value("Produto já cadastrado!"));
@@ -149,20 +161,24 @@ public class ProdutoControllerTest {
     @Test
     public void atualizar_produto_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
         var produto = Produto.builder()
                 .id(1)
                 .nomeDoProduto("Caneta Preta Atualizada")
                 .valorDoProduto(new BigDecimal(3.5))
+                .dataCadastro(dataAtual)
                 .build();
 
         when(service.atualizar(any(), any())).thenReturn(ProdutoResponse.of(produto));
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         mockMvc.perform(put("/produtos/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\": 1, \"nome\": \"Caneta Preta Atualizada\", \"valorDoProduto\": 3.5}"))
+                        .content("{\"id\": 1, \"nomeDoProduto\": \"Caneta Preta Atualizada\", \"valorDoProduto\": 3.5}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Caneta Preta Atualizada"));
+                .andExpect(jsonPath("$.nomeDoProduto").value("Caneta Preta Atualizada"));
     }
 
     @Test
@@ -183,7 +199,7 @@ public class ProdutoControllerTest {
 
         mockMvc.perform(put("/produtos/{id}", 5L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"nome\": \"Caneta Preta Atualizada\", \"valorDoProduto\": 3.5}"))
+                        .content("{\"nomeDoProduto\": \"Caneta Preta Atualizada\", \"valorDoProduto\": 3.5}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.mensagem").value("Não foi possível realizar essa operação!"))
                 .andExpect(jsonPath("$.detalhes").value("Produto não cadastrado!"));
