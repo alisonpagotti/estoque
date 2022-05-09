@@ -27,6 +27,8 @@ public class EstoqueService {
     @Autowired
     private EnviarFilaProduto enviarFilaProduto;
 
+    private final String EX_ESTOQUE_NAO_CADASTRADO = "Estoque não cadastrado!";
+
     public List<EstoqueResponse> listarTodos() {
         var estoque = repository.findAll();
 
@@ -40,7 +42,7 @@ public class EstoqueService {
             return EstoqueResponse.of(estoque);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Estoque não cadastrado!");
+            throw new EntityNotFoundException(EX_ESTOQUE_NAO_CADASTRADO);
         }
     }
 
@@ -69,7 +71,7 @@ public class EstoqueService {
             return EstoqueResponse.of(estoque);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Estoque não cadastrado!");
+            throw new EntityNotFoundException(EX_ESTOQUE_NAO_CADASTRADO);
         }
     }
 
@@ -79,7 +81,7 @@ public class EstoqueService {
             repository.deleteById(id);
 
         } catch (Exception ex) {
-            throw new EntityNotFoundException("Estoque não cadastrado!");
+            throw new EntityNotFoundException(EX_ESTOQUE_NAO_CADASTRADO);
         }
     }
 }
