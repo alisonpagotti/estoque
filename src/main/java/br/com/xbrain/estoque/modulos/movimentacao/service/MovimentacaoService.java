@@ -1,5 +1,6 @@
 package br.com.xbrain.estoque.modulos.movimentacao.service;
 
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
 import br.com.xbrain.estoque.modulos.estoque.repository.EstoqueRepository;
 import br.com.xbrain.estoque.modulos.movimentacao.dto.AtualizarMovimentacaoRequest;
@@ -15,12 +16,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static br.com.xbrain.estoque.modulos.movimentacao.enums.ETipo.ENTRADA;
-import static br.com.xbrain.estoque.modulos.movimentacao.enums.ETipo.SAIDA;
 
 @Service
 public class MovimentacaoService {
@@ -33,6 +31,9 @@ public class MovimentacaoService {
 
     @Autowired
     private EstoqueRepository estoqueRepository;
+
+    @Autowired
+    private DataHoraService dataHoraService;
 
     private final String EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA = "Tipo de movimentação não cadastrada!";
     private final String EX_MOVIMENTACAO_NAO_CADASTRADA = "Movimentação não cadastrada!";
@@ -91,7 +92,7 @@ public class MovimentacaoService {
                 .quantidade(request.getQuantidade())
                 .estoque(estoque)
                 .observacao(request.getObservacao())
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataHoraService.DataHoraAtual())
                 .build();
 
         repository.save(movimentacao);
@@ -111,7 +112,7 @@ public class MovimentacaoService {
                 .quantidade(request.getQuantidade())
                 .estoque((estoque))
                 .observacao(request.getObservacao())
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataHoraService.DataHoraAtual())
                 .build();
 
         repository.save(movimentacao);

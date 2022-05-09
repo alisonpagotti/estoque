@@ -2,7 +2,6 @@ package br.com.xbrain.estoque.modulos.movimentacao;
 
 import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
 import br.com.xbrain.estoque.modulos.produto.model.Produto;
-import org.apache.tomcat.jni.Local;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

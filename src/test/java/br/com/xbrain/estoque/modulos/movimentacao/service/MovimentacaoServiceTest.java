@@ -1,5 +1,6 @@
 package br.com.xbrain.estoque.modulos.movimentacao.service;
 
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
 import br.com.xbrain.estoque.modulos.estoque.repository.EstoqueRepository;
 import br.com.xbrain.estoque.modulos.movimentacao.dto.AtualizarMovimentacaoRequest;
@@ -36,6 +37,8 @@ public class MovimentacaoServiceTest {
     private EstoqueRepository estoqueRepository;
     @Mock
     private ProdutoRepository produtoRepository;
+    @Mock
+    private DataHoraService dataHoraService;
     @InjectMocks
     private MovimentacaoService service;
 
@@ -106,9 +109,6 @@ public class MovimentacaoServiceTest {
     @Test
     public void listar_porTipo_naoCadastrado_badRequest() throws Exception {
 
-        doThrow(new IllegalArgumentException("Tipo de movimentacao não cadastrada!"))
-                .when(repository).findByTipo(any());
-
         assertThatThrownBy(() -> service.listarPorTipoMovimentacao("espera"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Tipo de movimentação não cadastrada!");
@@ -154,6 +154,7 @@ public class MovimentacaoServiceTest {
 
         when(produtoRepository.getById(any())).thenReturn(umProdutoDataCadastro(1, "Caneta Azul", dataAtual));
         when(estoqueRepository.getById(any())).thenReturn(umEstoqueDataCadastro(1, "Estoque de Canetas", dataAtual));
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         var movimentacaoRequest = MovimentacaoRequest.builder()
                 .tipo(ETipo.ENTRADA)
@@ -200,12 +201,15 @@ public class MovimentacaoServiceTest {
     @Test
     public void movimentacao_saida_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
         var estoqueAtual = Estoque.builder()
                 .id(1)
                 .nomeDoEstoque("Estoque de Canetas")
                 .quantidadeTotal(10)
                 .valorTotal(new BigDecimal(30.0))
                 .produto(new ArrayList<>())
+                .dataCadastro(dataAtual)
                 .build();
 
         var produtoAtual = Produto.builder()
@@ -214,6 +218,7 @@ public class MovimentacaoServiceTest {
                 .valorDoProduto(new BigDecimal(3.0))
                 .quantidade(10)
                 .estoque(estoqueAtual)
+                .dataCadastro(dataAtual)
                 .build();
 
         var movimentacao = Movimentacao.builder()
@@ -222,10 +227,12 @@ public class MovimentacaoServiceTest {
                 .produto(produtoAtual)
                 .estoque(estoqueAtual)
                 .observacao("Saída de 5 canetas azuis")
+                .dataCadastro(dataAtual)
                 .build();
 
         when(estoqueRepository.getById(any())).thenReturn(estoqueAtual);
         when(produtoRepository.getById(any())).thenReturn(produtoAtual);
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         var movimentacaoRequest = MovimentacaoRequest.builder()
                 .tipo(ETipo.SAIDA)
@@ -264,10 +271,6 @@ public class MovimentacaoServiceTest {
                 .observacao("Entrada de 110 canetas azuis")
                 .build();
 
-        doThrow(new ArithmeticException("Quantidade ultrapassa o limite de 100 unidades do estoque! " +
-                "O estoque ainda permite a entrada de 100 unidades."))
-                .when(repository).save(movimentacao);
-
         assertThatThrownBy(() -> service.movimentacao(movimentacaoRequest))
                 .isInstanceOf(ArithmeticException.class)
                 .hasMessage("Quantidade ultrapassa o limite de 100 unidades do estoque! " +
@@ -296,9 +299,6 @@ public class MovimentacaoServiceTest {
                 .observacao("Saída de 10 canetas azuis")
                 .build();
 
-        doThrow(new ArithmeticException("Quantidade de saída maior do que a quantidade que o estoque possui!"))
-                .when(repository).save(movimentacao);
-
         assertThatThrownBy(() -> service.movimentacao(movimentacaoRequest))
                 .isInstanceOf(ArithmeticException.class)
                 .hasMessage("Quantidade de saída maior do que a quantidade que o estoque possui!");
@@ -325,9 +325,6 @@ public class MovimentacaoServiceTest {
                 .estoque(umEstoqueQuantidade(1, "Estoque de Caneta", 20))
                 .observacao("Saída de 15 canetas azuis")
                 .build();
-
-        doThrow(new ArithmeticException("Quantidade de saída maior do que a quantidade que o estoque possui!"))
-                .when(repository).save(movimentacao);
 
         assertThatThrownBy(() -> service.movimentacao(movimentacaoRequest))
                 .isInstanceOf(ArithmeticException.class)
