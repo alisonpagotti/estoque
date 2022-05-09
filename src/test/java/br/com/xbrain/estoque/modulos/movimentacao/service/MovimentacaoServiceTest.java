@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static br.com.xbrain.estoque.modulos.movimentacao.MovimentacaoHelper.umEstoque;
-import static br.com.xbrain.estoque.modulos.movimentacao.MovimentacaoHelper.umProduto;
+import static br.com.xbrain.estoque.modulos.movimentacao.MovimentacaoHelper.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -284,7 +283,7 @@ public class MovimentacaoServiceTest {
                 .build();
 
         var movimentacao = Movimentacao.builder()
-                .tipo(ETipo.ENTRADA)
+                .tipo(ETipo.SAIDA)
                 .quantidade(10)
                 .produto(umProduto(1, "Caneta Azul"))
                 .estoque(umEstoque(1, "Estoque de Caneta"))
@@ -299,7 +298,35 @@ public class MovimentacaoServiceTest {
                 .hasMessage("Quantidade de saída maior do que a quantidade que o estoque possui!");
     }
 
-    //TODO: Fazer teste de saida maior do que o estoque do produto
+    @Test
+    public void movimentacao_saida_maiorQueQuantidadeProduto_badRequest() throws Exception {
+
+        when(produtoRepository.getById(any())).thenReturn(umProdutoQuantidade(1, "Caneta Azul", 10));
+        when(estoqueRepository.getById(any())).thenReturn(umEstoqueQuantidade(1, "Estoque de Canetas", 20));
+
+        var movimentacaoRequest = MovimentacaoRequest.builder()
+                .tipo(ETipo.SAIDA)
+                .idProduto(umProdutoQuantidade(1, "Caneta Azul", 10).getId())
+                .idEstoque(umEstoqueQuantidade(1, "Estoque de Canetas", 20).getId())
+                .quantidade(15)
+                .observacao("Saída de 15 canetas azuis")
+                .build();
+
+        var movimentacao = Movimentacao.builder()
+                .tipo(ETipo.SAIDA)
+                .quantidade(15)
+                .produto(umProdutoQuantidade(1, "Caneta Azul", 10))
+                .estoque(umEstoqueQuantidade(1, "Estoque de Caneta", 20))
+                .observacao("Saída de 15 canetas azuis")
+                .build();
+
+        doThrow(new ArithmeticException("Quantidade de saída maior do que a quantidade que o estoque possui!"))
+                .when(repository).save(movimentacao);
+
+        assertThatThrownBy(() -> service.movimentacao(movimentacaoRequest))
+                .isInstanceOf(ArithmeticException.class)
+                .hasMessage("Quantidade de saída maior do que a quantidade que o estoque possui!");
+    }
 
     @Test
     public void atualizar_movimentacao_sucesso() throws Exception {

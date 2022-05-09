@@ -26,4 +26,23 @@ public class MovimentacaoHelper {
                 .valorTotal(new BigDecimal(0))
                 .build();
     }
+
+    public static Produto umProdutoQuantidade(Integer id, String nome, Integer quantidade) {
+        return Produto.builder()
+                .id(id)
+                .nomeDoProduto(nome)
+                .quantidade(quantidade)
+                .valorDoProduto(new BigDecimal(3.0))
+                .build();
+    }
+
+    public static Estoque umEstoqueQuantidade(Integer id, String nome, Integer quantidade) {
+        return Estoque.builder()
+                .id(id)
+                .nomeDoEstoque(nome)
+                .quantidadeTotal(quantidade)
+                .produto(new ArrayList<>())
+                .valorTotal(new BigDecimal(0))
+                .build();
+    }
 }
