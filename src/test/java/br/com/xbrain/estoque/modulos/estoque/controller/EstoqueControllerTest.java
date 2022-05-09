@@ -62,9 +62,9 @@ public class EstoqueControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id").value(1))
-                .andExpect(jsonPath("$.[0].nome").value("Estoque de Caneta"))
+                .andExpect(jsonPath("$.[0].nomeDoEstoque").value("Estoque de Caneta"))
                 .andExpect(jsonPath("$.[1].id").value(2))
-                .andExpect(jsonPath("$.[1].nome").value("Estoque de Caderno"));
+                .andExpect(jsonPath("$.[1].nomeDoEstoque").value("Estoque de Caderno"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class EstoqueControllerTest {
         mockMvc.perform(get("/estoques/detalhar/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Estoque de Caneta"));
+                .andExpect(jsonPath("$.nomeDoEstoque").value("Estoque de Caneta"));
     }
 
     @Test
@@ -121,10 +121,10 @@ public class EstoqueControllerTest {
 
         mockMvc.perform(post("/estoques")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\": 1, \"nome\": \"Estoque de Caneta\"}"))
+                        .content("{\"id\": 1, \"nomeDoEstoque\": \"Estoque de Caneta\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Estoque de Caneta"));
+                .andExpect(jsonPath("$.nomeDoEstoque").value("Estoque de Caneta"));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class EstoqueControllerTest {
                         .content("{\"id\": 1, \"nome\": \"Estoque de Caneta Atualizado\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.nome").value("Estoque de Caneta Atualizado"));
+                .andExpect(jsonPath("$.nomeDoEstoque").value("Estoque de Caneta Atualizado"));
     }
 
     @Test

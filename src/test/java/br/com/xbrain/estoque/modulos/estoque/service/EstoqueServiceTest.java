@@ -1,5 +1,6 @@
 package br.com.xbrain.estoque.modulos.estoque.service;
 
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.estoque.dto.AtualizarEstoqueRequest;
 import br.com.xbrain.estoque.modulos.estoque.dto.EstoqueRequest;
 import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
@@ -12,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,6 +25,9 @@ public class EstoqueServiceTest {
 
     @Mock
     private EstoqueRepository repository;
+
+    @Mock
+    private DataHoraService dataHoraService;
 
     @InjectMocks
     private EstoqueService service;
@@ -62,16 +67,21 @@ public class EstoqueServiceTest {
     @Test
     public void cadastrar_estoque_sucesso() throws Exception {
 
+        var dataAtual = LocalDateTime.now();
+
         var estoque = Estoque.builder()
                 .nomeDoEstoque("Estoque de Caneta")
                 .quantidadeTotal(0)
                 .produto(new ArrayList<>())
                 .valorTotal(new BigDecimal(0.0))
+                .dataCadastro(dataAtual)
                 .build();
 
         var estoqueRequest = EstoqueRequest.builder()
                 .nomeDoEstoque("Estoque de Caneta")
                 .build();
+
+        when(dataHoraService.DataHoraAtual()).thenReturn(dataAtual);
 
         var estoqueCadastrado = service.cadastrar(estoqueRequest);
 
@@ -105,8 +115,6 @@ public class EstoqueServiceTest {
 
     @Test
     public void atualizar_estoque_notFound() throws Exception {
-
-        doThrow(new EntityNotFoundException("Estoque não cadastrado!")).when(repository).getById(any());
 
         assertThatThrownBy(() -> service.atualizar(any(), any()))
                 .isInstanceOf(EntityNotFoundException.class)

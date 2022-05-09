@@ -1,5 +1,6 @@
 package br.com.xbrain.estoque.modulos.estoque.service;
 
+import br.com.xbrain.estoque.modulos.comum.service.DataHoraService;
 import br.com.xbrain.estoque.modulos.estoque.dto.AtualizarEstoqueRequest;
 import br.com.xbrain.estoque.modulos.estoque.dto.EstoqueRequest;
 import br.com.xbrain.estoque.modulos.estoque.dto.EstoqueResponse;
@@ -26,6 +27,9 @@ public class EstoqueService {
 
     @Autowired
     private EnviarFilaProduto enviarFilaProduto;
+
+    @Autowired
+    private DataHoraService dataHoraService;
 
     private final String EX_ESTOQUE_NAO_CADASTRADO = "Estoque não cadastrado!";
 
@@ -54,7 +58,7 @@ public class EstoqueService {
                 .quantidadeTotal(0)
                 .produto(new ArrayList<>())
                 .valorTotal(new BigDecimal(0.0))
-                .dataCadastro(LocalDateTime.now())
+                .dataCadastro(dataHoraService.DataHoraAtual())
                 .build();
 
         repository.save(estoque);
