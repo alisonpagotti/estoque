@@ -43,7 +43,7 @@ public class MovimentacaoServiceTest {
     private MovimentacaoService service;
 
     @Test
-    public void listar_porTipo_entrada_sucesso() throws Exception {
+    public void listar_porTipo_entrada_sucesso() {
 
         List<Movimentacao> listaMovimentacoes = Arrays.asList(
                 Movimentacao.builder()
@@ -75,7 +75,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void listar_porTipo_saida_sucesso() throws Exception {
+    public void listar_porTipo_saida_sucesso() {
 
         List<Movimentacao> listaMovimentacoes = Arrays.asList(
                 Movimentacao.builder()
@@ -107,7 +107,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void listar_porTipo_naoCadastrado_badRequest() throws Exception {
+    public void listar_porTipo_naoCadastrado_badRequest() {
 
         assertThatThrownBy(() -> service.listarPorTipoMovimentacao("espera"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -115,7 +115,61 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void detalhar_porMovimentacao_sucesso() throws Exception {
+    public void listar_porPeriodo_sucesso() {
+
+        var dataAtualUm = LocalDateTime.of(
+                2022, 5, 10,
+                14, 40, 0);
+
+        var dataAtualDois = LocalDateTime.of(
+                2022, 5, 10,
+                14, 41, 0);
+
+        var periodoInicio = LocalDateTime.of(
+                2022, 5, 10,
+                9, 0, 0);
+
+        var periodoFim = LocalDateTime.of(
+                2022, 5, 30,
+                9, 0, 0);
+
+        List<Movimentacao> listaMovimentacoes = Arrays.asList(
+                Movimentacao.builder()
+                        .id(1)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(1, "Caneta Preta"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .dataCadastro(dataAtualUm)
+                        .observacao("Entrada de 10 Canetas Pretas")
+                        .build(),
+
+                Movimentacao.builder()
+                        .id(2)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(2, "Caneta Azul"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .dataCadastro(dataAtualDois)
+                        .observacao("Entrada de 10 Canetas Azuis")
+                        .build()
+        );
+
+        when(repository.findByDataCadastroBetween(periodoInicio,periodoFim)).thenReturn(listaMovimentacoes);
+
+        var listaPorPeriodo = service.listarPorPeriodo(periodoInicio, periodoFim);
+
+        assertEquals(listaMovimentacoes.size(), listaPorPeriodo.size());
+        assertEquals(listaPorPeriodo.get(0).getId(), 1);
+        assertEquals(listaPorPeriodo.get(0).getNomeProduto(), "Caneta Preta");
+        assertEquals(listaPorPeriodo.get(1).getId(), 2);
+        assertEquals(listaPorPeriodo.get(1).getNomeProduto(), "Caneta Azul");
+
+        verify(repository, times(1)).findByDataCadastroBetween(periodoInicio, periodoFim);
+    }
+
+    @Test
+    public void detalhar_porMovimentacao_sucesso() {
 
         var movimentacao = Movimentacao.builder()
                 .id(1)
@@ -136,7 +190,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void detalhar_porMovimentacao_naoCadastrada_notFound() throws Exception {
+    public void detalhar_porMovimentacao_naoCadastrada_notFound() {
 
         doThrow(new EntityNotFoundException("Movimentacao não cadastrada!")).when(repository).getById(1);
 
@@ -148,7 +202,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void movimentacao_entrada_sucesso() throws Exception {
+    public void movimentacao_entrada_sucesso() {
 
         var dataAtual = LocalDateTime.now();
 
@@ -199,7 +253,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void movimentacao_saida_sucesso() throws Exception {
+    public void movimentacao_saida_sucesso() {
 
         var dataAtual = LocalDateTime.now();
 
@@ -250,7 +304,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void movimentacao_entrada_maiorQueCemUnidades_badRequest() throws Exception {
+    public void movimentacao_entrada_maiorQueCemUnidades_badRequest() {
 
         when(produtoRepository.getById(any())).thenReturn(umProduto(1, "Caneta Azul"));
         when(estoqueRepository.getById(any())).thenReturn(umEstoque(1, "Estoque de Canetas"));
@@ -278,7 +332,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void movimentacao_saida_maiorQueQuantidadeEmEstoque_badRequest() throws Exception {
+    public void movimentacao_saida_maiorQueQuantidadeEmEstoque_badRequest() {
 
         when(produtoRepository.getById(any())).thenReturn(umProduto(1, "Caneta Azul"));
         when(estoqueRepository.getById(any())).thenReturn(umEstoque(1, "Estoque de Canetas"));
@@ -305,7 +359,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void movimentacao_saida_maiorQueQuantidadeProduto_badRequest() throws Exception {
+    public void movimentacao_saida_maiorQueQuantidadeProduto_badRequest() {
 
         when(produtoRepository.getById(any())).thenReturn(umProdutoQuantidade(1, "Caneta Azul", 10));
         when(estoqueRepository.getById(any())).thenReturn(umEstoqueQuantidade(1, "Estoque de Canetas", 20));
@@ -332,7 +386,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void atualizar_movimentacao_sucesso() throws Exception {
+    public void atualizar_movimentacao_sucesso() {
 
         var movimentacao = Movimentacao.builder()
                 .id(1)
@@ -357,7 +411,7 @@ public class MovimentacaoServiceTest {
     }
 
     @Test
-    public void atualizar_movimentacao_naoCadastrada_notFound() throws Exception {
+    public void atualizar_movimentacao_naoCadastrada_notFound() {
 
         doThrow(new EntityNotFoundException("Movimentação não cadastrada!"))
                 .when(repository).getById(any());

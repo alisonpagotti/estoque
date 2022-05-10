@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpClientErrorException;
@@ -184,6 +185,69 @@ public class MovimentacaoControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.mensagem").value("Não foi possível realizar essa operação!"))
                 .andExpect(jsonPath("$.detalhes").value("Tipo de movimentação não cadastrada!"));
+    }
+
+    @Test
+    public void listar_porPeriodo_sucesso() throws Exception {
+
+        var dataAtualUm = LocalDateTime.of(2022, 05, 10, 14, 40, 00);
+        var dataAtualDois = LocalDateTime.of(2022, 05, 10, 14, 41, 00);
+
+        List<Movimentacao> listaMovimentacoes = Arrays.asList(
+                Movimentacao.builder()
+                        .id(1)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(1, "Caneta Preta"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .dataCadastro(dataAtualUm)
+                        .observacao("Entrada de 10 Canetas Pretas")
+                        .build(),
+
+                Movimentacao.builder()
+                        .id(2)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(2, "Caneta Azul"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .dataCadastro(dataAtualDois)
+                        .observacao("Entrada de 10 Canetas Azuis")
+                        .build()
+        );
+
+        when(service.listarPorPeriodo(any(), any())).thenReturn(MovimentacaoResponse.of(listaMovimentacoes));
+
+        mockMvc.perform(get("/movimentacoes/listar/periodo")
+                        .param("inicio", "01-05-2022 14:31:00")
+                        .param("fim", "30-05-2022 14:31:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$.[0].id").value(1))
+                .andExpect(jsonPath("$.[0].tipo").value("ENTRADA"))
+                .andExpect(jsonPath("$.[0].quantidade").value(10))
+                .andExpect(jsonPath("$.[0].nomeProduto").value("Caneta Preta"))
+                .andExpect(jsonPath("$.[0].nomeEstoque").value("Estoque de Canetas"))
+                .andExpect(jsonPath("$.[0].dataCadastro").value("10-05-2022 às 14:40:00"))
+                .andExpect(jsonPath("$.[0].observacao").value("Entrada de 10 Canetas Pretas"))
+                .andExpect(jsonPath("$.[1].id").value(2))
+                .andExpect(jsonPath("$.[1].tipo").value("ENTRADA"))
+                .andExpect(jsonPath("$.[1].quantidade").value(10))
+                .andExpect(jsonPath("$.[1].nomeProduto").value("Caneta Azul"))
+                .andExpect(jsonPath("$.[1].nomeEstoque").value("Estoque de Canetas"))
+                .andExpect(jsonPath("$.[1].dataCadastro").value("10-05-2022 às 14:41:00"))
+                .andExpect(jsonPath("$.[1].observacao").value("Entrada de 10 Canetas Azuis"));
+    }
+
+    @Test
+    public void listar_porPeriodo_nenhumaMovimentacao_sucesso() throws Exception {
+
+        when(service.listarPorPeriodo(any(), any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/movimentacoes/listar/periodo")
+                .param("inicio", "01-05-2022 14:31:00")
+                .param("fim", "30-05-2022 14:31:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
