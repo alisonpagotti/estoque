@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class DataHoraService {
 
     public LocalDateTime DataHoraAtual() {
-        return LocalDateTime.now();
+        return LocalDateTime.now()
+                .withNano(0);
     }
 }

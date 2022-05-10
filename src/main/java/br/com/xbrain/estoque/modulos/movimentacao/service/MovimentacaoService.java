@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static br.com.xbrain.estoque.modulos.movimentacao.enums.ETipo.ENTRADA;
@@ -54,6 +56,13 @@ public class MovimentacaoService {
         } catch (Exception ex) {
             throw new IllegalArgumentException(EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA);
         }
+    }
+
+    public List<MovimentacaoResponse> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+
+        var periodo = repository.findByDataCadastroBetween(inicio, fim);
+
+        return MovimentacaoResponse.of(periodo);
     }
 
     public MovimentacaoResponse detalhar(Integer id) {
