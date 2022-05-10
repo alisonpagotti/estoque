@@ -33,7 +33,7 @@ public class EstoqueServiceTest {
     private EstoqueService service;
 
     @Test
-    public void detalhar_porEstoque_sucesso() throws Exception {
+    public void detalhar_porEstoque_sucesso() {
 
         var estoque = Estoque.builder()
                 .id(1)
@@ -48,12 +48,13 @@ public class EstoqueServiceTest {
         var estoqueDetalhado = service.detalhar(estoque.getId());
 
         assertEquals(estoque.getId(), estoqueDetalhado.getId());
+        assertEquals(estoque.getNomeDoEstoque(), estoqueDetalhado.getNomeDoEstoque());
 
         verify(repository, times(1)).getById(estoque.getId());
     }
 
     @Test
-    public void detalhar_porEstoque_naoCadastrado_notFound() throws Exception {
+    public void detalhar_porEstoque_naoCadastrado_notFound() {
 
         doThrow(new EntityNotFoundException("Estoque não cadastrado!")).when(repository).getById(1);
 
@@ -65,7 +66,7 @@ public class EstoqueServiceTest {
     }
 
     @Test
-    public void cadastrar_estoque_sucesso() throws Exception {
+    public void cadastrar_estoque_sucesso() {
 
         var dataAtual = LocalDateTime.now();
 
@@ -86,11 +87,12 @@ public class EstoqueServiceTest {
         var estoqueCadastrado = service.cadastrar(estoqueRequest);
 
         assertEquals(estoque.getNomeDoEstoque(), estoqueCadastrado.getNomeDoEstoque());
+
         verify(repository, times(1)).save(estoque);
     }
 
     @Test
-    public void atualizar_estoque_sucesso() throws Exception {
+    public void atualizar_estoque_sucesso() {
 
         var estoque = Estoque.builder()
                 .id(1)
@@ -108,13 +110,14 @@ public class EstoqueServiceTest {
 
         var estoqueAtualizado = service.atualizar(1, estoqueAtualizadoRequest);
 
+        assertEquals(estoque.getId(), estoqueAtualizado.getId());
         assertEquals(estoque.getNomeDoEstoque(), estoqueAtualizado.getNomeDoEstoque());
 
         verify(repository, times(1)).getById(estoque.getId());
     }
 
     @Test
-    public void atualizar_estoque_notFound() throws Exception {
+    public void atualizar_estoque_notFound() {
 
         assertThatThrownBy(() -> service.atualizar(any(), any()))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -122,7 +125,7 @@ public class EstoqueServiceTest {
     }
 
     @Test
-    public void remover_estoque_sucesso() throws Exception {
+    public void remover_estoque_sucesso() {
 
         var estoque = Estoque.builder()
                 .id(1)
@@ -138,7 +141,7 @@ public class EstoqueServiceTest {
     }
 
     @Test
-    public void remover_estoque_notFound() throws Exception {
+    public void remover_estoque_notFound() {
 
         doThrow(new EntityNotFoundException("Estoque não cadastrado!")).when(repository).deleteById(any());
 

@@ -37,7 +37,7 @@ public class ProdutoServiceTest {
     private ProdutoService service;
 
     @Test
-    public void detalhar_porProduto_sucesso() throws Exception {
+    public void detalhar_porProduto_sucesso() {
 
         var produto = Produto.builder()
                 .id(1)
@@ -50,12 +50,13 @@ public class ProdutoServiceTest {
         var produtoDetalhado = service.detalhar(produto.getId());
 
         assertEquals(produto.getId(), produtoDetalhado.getId());
+        assertEquals(produto.getNomeDoProduto(), produtoDetalhado.getNomeDoProduto());
 
         verify(repository, times(1)).getById(produto.getId());
     }
 
     @Test
-    public void detalhar_porProduto_NaoCadastrado_notFound() throws Exception {
+    public void detalhar_porProduto_NaoCadastrado_notFound() {
 
         doThrow(new EntityNotFoundException("Produto não cadastrado!")).when(repository).getById(1);
 
@@ -67,7 +68,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void cadastrar_produto_sucesso() throws Exception {
+    public void cadastrar_produto_sucesso() {
 
         var dataAtual = LocalDateTime.now();
 
@@ -93,7 +94,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void atualizar_produto_sucesso() throws Exception {
+    public void atualizar_produto_sucesso() {
 
         var produto = Produto.builder()
                 .id(1)
@@ -117,7 +118,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void atualizar_produto_NaoCadastrado_notFound() throws Exception {
+    public void atualizar_produto_NaoCadastrado_notFound() {
 
         doThrow(new EntityNotFoundException("Produto não cadastrado!")).when(repository).getById(1);
 
@@ -129,7 +130,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void remover_produto_sucesso() throws Exception {
+    public void remover_produto_sucesso() {
 
         var produto = Produto.builder()
                 .id(1)
@@ -143,7 +144,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void remover_produto_NaoCadastrado_notFound() throws Exception {
+    public void remover_produto_NaoCadastrado_notFound() {
 
         doThrow(new EntityNotFoundException("Produto não cadastrado!")).when(repository).deleteById(any());
 
