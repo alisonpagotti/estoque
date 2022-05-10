@@ -86,14 +86,13 @@ public class MovimentacaoService {
         produto.entrada(request.getQuantidade());
         estoque.entradaValor(produto.getValorDoProduto(), request.getQuantidade());
 
-        var movimentacao = Movimentacao.builder()
-                .tipo(request.getTipo())
-                .produto(produto)
-                .quantidade(request.getQuantidade())
-                .estoque(estoque)
-                .observacao(request.getObservacao())
-                .dataCadastro(dataHoraService.DataHoraAtual())
-                .build();
+        var movimentacao = Movimentacao.salvar(
+                request.getTipo(),
+                produto,
+                request.getQuantidade(),
+                estoque,
+                request.getObservacao(),
+                dataHoraService.DataHoraAtual());
 
         repository.save(movimentacao);
 
@@ -106,14 +105,13 @@ public class MovimentacaoService {
         produto.validarEstoque(request.getQuantidade());
         estoque.saidaValor(produto.getValorDoProduto(), request.getQuantidade());
 
-        var movimentacao = Movimentacao.builder()
-                .tipo(request.getTipo())
-                .produto(produto)
-                .quantidade(request.getQuantidade())
-                .estoque((estoque))
-                .observacao(request.getObservacao())
-                .dataCadastro(dataHoraService.DataHoraAtual())
-                .build();
+        var movimentacao = Movimentacao.salvar(
+                request.getTipo(),
+                produto,
+                request.getQuantidade(),
+                estoque,
+                request.getObservacao(),
+                dataHoraService.DataHoraAtual());
 
         repository.save(movimentacao);
 

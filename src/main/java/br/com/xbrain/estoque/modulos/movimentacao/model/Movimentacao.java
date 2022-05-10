@@ -42,4 +42,16 @@ public class Movimentacao {
     @ManyToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "estoque")
     private Estoque estoque;
+
+    public static Movimentacao salvar(ETipo tipo, Produto produto, Integer quantidade,
+                                      Estoque estoque, String observacao, LocalDateTime dataCadastro) {
+        return Movimentacao.builder()
+                .tipo(tipo)
+                .produto(produto)
+                .quantidade(quantidade)
+                .estoque(estoque)
+                .observacao(observacao)
+                .dataCadastro(dataCadastro)
+                .build();
+    }
 }
