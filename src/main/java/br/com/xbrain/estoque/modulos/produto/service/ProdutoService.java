@@ -31,8 +31,8 @@ public class ProdutoService {
     @Autowired
     private DataHoraService dataHoraService;
 
-    private final String EX_PRODUTO_NAO_CADASTRADO = "Produto não cadastrado!";
-    private final String EX_PRODUTO_JA_CADASTRADO = "Produto já cadastrado!";
+    private static final String EX_PRODUTO_NAO_CADASTRADO = "Produto não cadastrado!";
+    private static final String EX_PRODUTO_JA_CADASTRADO = "Produto já cadastrado!";
 
     public List<ProdutoResponse> listarTodos() {
         var produto = repository.findAll();
@@ -46,7 +46,7 @@ public class ProdutoService {
 
             return ProdutoResponse.of(produto);
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
             throw new EntityNotFoundException(EX_PRODUTO_NAO_CADASTRADO);
         }
     }

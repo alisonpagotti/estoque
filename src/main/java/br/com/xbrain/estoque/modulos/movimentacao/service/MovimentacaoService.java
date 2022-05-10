@@ -35,8 +35,8 @@ public class MovimentacaoService {
     @Autowired
     private DataHoraService dataHoraService;
 
-    private final String EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA = "Tipo de movimentação não cadastrada!";
-    private final String EX_MOVIMENTACAO_NAO_CADASTRADA = "Movimentação não cadastrada!";
+    private static final String EX_TIPO_MOVIMENTACAO_NAO_CADASTRADA = "Tipo de movimentação não cadastrada!";
+    private static final String EX_MOVIMENTACAO_NAO_CADASTRADA = "Movimentação não cadastrada!";
 
     public List<MovimentacaoResponse> listarTodas() {
         var movimentacoes = repository.findAll();

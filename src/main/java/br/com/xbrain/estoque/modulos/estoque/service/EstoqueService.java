@@ -31,7 +31,7 @@ public class EstoqueService {
     @Autowired
     private DataHoraService dataHoraService;
 
-    private final String EX_ESTOQUE_NAO_CADASTRADO = "Estoque não cadastrado!";
+    private static final String EX_ESTOQUE_NAO_CADASTRADO = "Estoque não cadastrado!";
 
     public List<EstoqueResponse> listarTodos() {
         var estoque = repository.findAll();
