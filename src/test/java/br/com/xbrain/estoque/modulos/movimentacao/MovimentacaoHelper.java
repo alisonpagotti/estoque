@@ -1,11 +1,15 @@
 package br.com.xbrain.estoque.modulos.movimentacao;
 
 import br.com.xbrain.estoque.modulos.estoque.model.Estoque;
+import br.com.xbrain.estoque.modulos.movimentacao.enums.ETipo;
+import br.com.xbrain.estoque.modulos.movimentacao.model.Movimentacao;
 import br.com.xbrain.estoque.modulos.produto.model.Produto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MovimentacaoHelper {
 
@@ -68,5 +72,49 @@ public class MovimentacaoHelper {
                 .produto(new ArrayList<>())
                 .valorTotal(new BigDecimal(0))
                 .build();
+    }
+
+    public static List<Movimentacao> umaListaMovimentacaoEntrada() {
+        return Arrays.asList(
+                Movimentacao.builder()
+                        .id(1)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(1, "Caneta Preta"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .observacao("Entrada de 10 Canetas Pretas")
+                        .build(),
+
+                Movimentacao.builder()
+                        .id(2)
+                        .tipo(ETipo.ENTRADA)
+                        .produto(umProduto(2, "Caneta Azul"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .observacao("Entrada de 10 Canetas Azuis")
+                        .build()
+        );
+    }
+
+    public static List<Movimentacao> umaListaMovimentacaoSaida() {
+        return Arrays.asList(
+                Movimentacao.builder()
+                        .id(1)
+                        .tipo(ETipo.SAIDA)
+                        .produto(umProduto(1, "Caneta Preta"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .observacao("Saída de 10 Canetas Pretas")
+                        .build(),
+
+                Movimentacao.builder()
+                        .id(2)
+                        .tipo(ETipo.SAIDA)
+                        .produto(umProduto(2, "Caneta Azul"))
+                        .quantidade(10)
+                        .estoque(umEstoque(1, "Estoque de Canetas"))
+                        .observacao("Saída de 10 Canetas Azuis")
+                        .build()
+        );
     }
 }

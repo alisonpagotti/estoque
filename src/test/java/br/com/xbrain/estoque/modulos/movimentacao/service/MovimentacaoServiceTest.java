@@ -45,31 +45,17 @@ public class MovimentacaoServiceTest {
     @Test
     public void listar_porTipo_entrada_sucesso() {
 
-        List<Movimentacao> listaMovimentacoes = Arrays.asList(
-                Movimentacao.builder()
-                        .id(1)
-                        .tipo(ETipo.ENTRADA)
-                        .produto(umProduto(1, "Caneta Preta"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .observacao("Entrada de 10 Canetas Pretas")
-                        .build(),
-
-                Movimentacao.builder()
-                        .id(2)
-                        .tipo(ETipo.ENTRADA)
-                        .produto(umProduto(2, "Caneta Azul"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .observacao("Entrada de 10 Canetas Azuis")
-                        .build()
-        );
+        var listaMovimentacoes = umaListaMovimentacaoEntrada();
 
         when(repository.findByTipo(ETipo.ENTRADA)).thenReturn(listaMovimentacoes);
 
         var listaTipoEntrada = service.listarPorTipoMovimentacao("entrada");
 
         assertEquals(listaMovimentacoes.size(), listaTipoEntrada.size());
+        assertEquals(listaTipoEntrada.get(0).getId(), 1);
+        assertEquals(listaTipoEntrada.get(0).getNomeProduto(), "Caneta Preta");
+        assertEquals(listaTipoEntrada.get(1).getId(), 2);
+        assertEquals(listaTipoEntrada.get(1).getNomeProduto(), "Caneta Azul");
 
         verify(repository, times(1)).findByTipo(ETipo.ENTRADA);
     }
@@ -77,31 +63,17 @@ public class MovimentacaoServiceTest {
     @Test
     public void listar_porTipo_saida_sucesso() {
 
-        List<Movimentacao> listaMovimentacoes = Arrays.asList(
-                Movimentacao.builder()
-                        .id(1)
-                        .tipo(ETipo.SAIDA)
-                        .produto(umProduto(1, "Caneta Preta"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .observacao("Saída de 10 Canetas Pretas")
-                        .build(),
-
-                Movimentacao.builder()
-                        .id(2)
-                        .tipo(ETipo.SAIDA)
-                        .produto(umProduto(2, "Caneta Azul"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .observacao("Saída de 10 Canetas Azuis")
-                        .build()
-        );
+        var listaMovimentacoes = umaListaMovimentacaoSaida();
 
         when(repository.findByTipo(ETipo.SAIDA)).thenReturn(listaMovimentacoes);
 
         var listaTipoEntrada = service.listarPorTipoMovimentacao("saida");
 
         assertEquals(listaMovimentacoes.size(), listaTipoEntrada.size());
+        assertEquals(listaTipoEntrada.get(0).getId(), 1);
+        assertEquals(listaTipoEntrada.get(0).getNomeProduto(), "Caneta Preta");
+        assertEquals(listaTipoEntrada.get(1).getId(), 2);
+        assertEquals(listaTipoEntrada.get(1).getNomeProduto(), "Caneta Azul");
 
         verify(repository, times(1)).findByTipo(ETipo.SAIDA);
     }
@@ -117,14 +89,6 @@ public class MovimentacaoServiceTest {
     @Test
     public void listar_porPeriodo_sucesso() {
 
-        var dataAtualUm = LocalDateTime.of(
-                2022, 5, 10,
-                14, 40, 0);
-
-        var dataAtualDois = LocalDateTime.of(
-                2022, 5, 10,
-                14, 41, 0);
-
         var periodoInicio = LocalDateTime.of(
                 2022, 5, 10,
                 9, 0, 0);
@@ -133,27 +97,7 @@ public class MovimentacaoServiceTest {
                 2022, 5, 30,
                 9, 0, 0);
 
-        List<Movimentacao> listaMovimentacoes = Arrays.asList(
-                Movimentacao.builder()
-                        .id(1)
-                        .tipo(ETipo.ENTRADA)
-                        .produto(umProduto(1, "Caneta Preta"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .dataCadastro(dataAtualUm)
-                        .observacao("Entrada de 10 Canetas Pretas")
-                        .build(),
-
-                Movimentacao.builder()
-                        .id(2)
-                        .tipo(ETipo.ENTRADA)
-                        .produto(umProduto(2, "Caneta Azul"))
-                        .quantidade(10)
-                        .estoque(umEstoque(1, "Estoque de Canetas"))
-                        .dataCadastro(dataAtualDois)
-                        .observacao("Entrada de 10 Canetas Azuis")
-                        .build()
-        );
+        var listaMovimentacoes = umaListaMovimentacaoEntrada();
 
         when(repository.findByDataCadastroBetween(periodoInicio,periodoFim)).thenReturn(listaMovimentacoes);
 
@@ -185,6 +129,7 @@ public class MovimentacaoServiceTest {
         var movimentacaoDetalhada = service.detalhar(movimentacao.getId());
 
         assertEquals(movimentacao.getId(), movimentacaoDetalhada.getId());
+        assertEquals(movimentacaoDetalhada.getNomeProduto(), "Caneta Azul");
 
         verify(repository, times(1)).getById(movimentacao.getId());
     }
@@ -248,6 +193,7 @@ public class MovimentacaoServiceTest {
         var movimentacaoEntrada = service.movimentacao(movimentacaoRequest);
 
         assertEquals(movimentacao.getTipo(), movimentacaoEntrada.getTipo());
+        assertEquals(movimentacaoEntrada.getNomeProduto(), "Caneta Azul");
 
         verify(repository, times(1)).save(movimentacao);
     }
@@ -296,9 +242,10 @@ public class MovimentacaoServiceTest {
                 .observacao("Saída de 5 canetas azuis")
                 .build();
 
-        var movimentacaoEntrada = service.movimentacao(movimentacaoRequest);
+        var movimentacaoSaida = service.movimentacao(movimentacaoRequest);
 
-        assertEquals(movimentacao.getTipo(), movimentacaoEntrada.getTipo());
+        assertEquals(movimentacao.getTipo(), movimentacaoSaida.getTipo());
+        assertEquals(movimentacaoSaida.getNomeProduto(), "Caneta Azul");
 
         verify(repository, times(1)).save(movimentacao);
     }
@@ -314,14 +261,6 @@ public class MovimentacaoServiceTest {
                 .idProduto(umProduto(1, "Caneta Azul").getId())
                 .idEstoque(umEstoque(1, "Estoque de Canetas").getId())
                 .quantidade(110)
-                .observacao("Entrada de 110 canetas azuis")
-                .build();
-
-        var movimentacao = Movimentacao.builder()
-                .tipo(ETipo.ENTRADA)
-                .quantidade(110)
-                .produto(umProduto(1, "Caneta Azul"))
-                .estoque(umEstoque(1, "Estoque de Caneta"))
                 .observacao("Entrada de 110 canetas azuis")
                 .build();
 
@@ -345,14 +284,6 @@ public class MovimentacaoServiceTest {
                 .observacao("Saída de 10 canetas azuis")
                 .build();
 
-        var movimentacao = Movimentacao.builder()
-                .tipo(ETipo.SAIDA)
-                .quantidade(10)
-                .produto(umProduto(1, "Caneta Azul"))
-                .estoque(umEstoque(1, "Estoque de Caneta"))
-                .observacao("Saída de 10 canetas azuis")
-                .build();
-
         assertThatThrownBy(() -> service.movimentacao(movimentacaoRequest))
                 .isInstanceOf(ArithmeticException.class)
                 .hasMessage("Quantidade de saída maior do que a quantidade que o estoque possui!");
@@ -369,14 +300,6 @@ public class MovimentacaoServiceTest {
                 .idProduto(umProdutoQuantidade(1, "Caneta Azul", 10).getId())
                 .idEstoque(umEstoqueQuantidade(1, "Estoque de Canetas", 20).getId())
                 .quantidade(15)
-                .observacao("Saída de 15 canetas azuis")
-                .build();
-
-        var movimentacao = Movimentacao.builder()
-                .tipo(ETipo.SAIDA)
-                .quantidade(15)
-                .produto(umProdutoQuantidade(1, "Caneta Azul", 10))
-                .estoque(umEstoqueQuantidade(1, "Estoque de Caneta", 20))
                 .observacao("Saída de 15 canetas azuis")
                 .build();
 
